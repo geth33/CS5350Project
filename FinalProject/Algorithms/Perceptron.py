@@ -43,6 +43,6 @@ def TestPerceptron(csvFileName, weightVector):
             #print("label: %d actual:%f" % (label, dotProduct))
     return wrongCount
 
-perceptronWeight = Perceptron('train.csv', 4, 0.01,10)
+perceptronWeight = Perceptron('../Data_&_Data_Prep/trainVectorized.csv', 39, 0.01,10)
 print("Standard Perceptron weight vector: ", perceptronWeight)
-print("Standard Perceptron wrong count:", TestPerceptron('test.csv', perceptronWeight))
+print("Standard Perceptron wrong count:", TestPerceptron('../Data_&_Data_Prep/testVectorized.csv', perceptronWeight))
