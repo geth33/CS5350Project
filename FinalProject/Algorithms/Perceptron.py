@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import numpy as np
+import csv
 
 def Perceptron(csvFileName, inputVectorLength, stepSize, epochNum):
     trainData = np.genfromtxt(csvFileName, delimiter=',')
@@ -43,6 +44,32 @@ def TestPerceptron(csvFileName, weightVector):
             #print("label: %d actual:%f" % (label, dotProduct))
     return wrongCount
 
-perceptronWeight = Perceptron('../Data_&_Data_Prep/trainVectorized.csv', 39, 0.01,10)
+perceptronWeight = Perceptron('../Data_&_Data_Prep/trainVectorized.csv', 81, 0.01,10)
 print("Standard Perceptron weight vector: ", perceptronWeight)
-print("Standard Perceptron wrong count:", TestPerceptron('../Data_&_Data_Prep/testVectorized.csv', perceptronWeight))
+#print("Standard Perceptron wrong count:", TestPerceptron('../Data_&_Data_Prep/testVectorized.csv', perceptronWeight))
+
+with open('../Data_&_Data_Prep/testFinalVectorized.csv', mode='r', newline='') as testFinalFile:
+    with open('testSubmission.csv', mode='w', newline='') as testSubmissionFile:
+        testWriter = csv.writer(testSubmissionFile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        testWriter.writerow(['ID','Prediction'])
+        for line in testFinalFile:
+            csvRow = []
+            row = line.strip().split(',')
+            csvRow.append(row[len(row)-1])
+            # check to see if cap gain is a good amount
+            if row[37] != 1:
+                rowVector = []
+                rowVector.append(1)
+                for i in range(len(row) - 1):
+                    rowVector.append(float(row[i]))
+
+                dotProduct = np.dot(rowVector, perceptronWeight)
+                if dotProduct <= 0:
+                    csvRow.append(0)
+                    testWriter.writerow(csvRow)
+                else:
+                    csvRow.append(1)
+                    testWriter.writerow(csvRow)
+            else:
+                csvRow.append(1)
+                testWriter.writerow(csvRow)

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import numpy as np
+import csv
 
 def AveragedPerceptron(csvFileName, inputVectorLength, stepSize, epochNum):
     trainData = np.genfromtxt(csvFileName, delimiter=',')
@@ -53,6 +54,29 @@ def TestAveragedPerceptron(csvFileName, weightVector):
     return wrongCount
 
 
-perceptronWeight = AveragedPerceptron('train.csv', 4, .01, 10)
+#perceptronWeight = AveragedPerceptron('train.csv', 4, .01, 10)
+perceptronWeight = AveragedPerceptron('../Data_&_Data_Prep/trainVectorized.csv', 105, 0.01,10)
 print("AveragedPerceptron weight vector: ", perceptronWeight)
-print("Number wrong with AveragedPerception: ", TestAveragedPerceptron('test.csv', perceptronWeight))
+#print("Number wrong with AveragedPerception: ", TestAveragedPerceptron('test.csv', perceptronWeight))
+print("Averaged Perceptron wrong count:", TestAveragedPerceptron('../Data_&_Data_Prep/testVectorized.csv', perceptronWeight))
+
+with open('../Data_&_Data_Prep/testFinalVectorized.csv', mode='r', newline='') as testFinalFile:
+    with open('../Data_&_Data_Prep/testSubmission3.csv', mode='w', newline='') as testSubmissionFile:
+        testWriter = csv.writer(testSubmissionFile, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        testWriter.writerow(['ID','Prediction'])
+        for line in testFinalFile:
+            csvRow = []
+            row = line.strip().split(',')
+            csvRow.append(row[len(row)-1])
+            rowVector = []
+            rowVector.append(1)
+            for i in range(len(row) - 1):
+                rowVector.append(float(row[i]))
+
+            dotProduct = np.dot(rowVector, perceptronWeight)
+            if dotProduct <= 0:
+                csvRow.append(0)
+                testWriter.writerow(csvRow)
+            else:
+                csvRow.append(1)
+                testWriter.writerow(csvRow)
